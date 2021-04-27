@@ -1,4 +1,4 @@
-# CMake-Cheat-Sheet
+# CMake Cheat Sheet
 
 This document is a cheat sheet I created for myself but perhaps it will be useful to others. I will continue to work on it as I learn more about CMake. If you see mistakes or have suggestions, please feel free to contact me at masood@masoodkamandy.com.
 
@@ -268,6 +268,14 @@ If you want to keep track of your versions, you can add a version argument to yo
 project(MyProject VERSION 1.0)
 ```
 
+We can also specify the C++ standard we'd like to use with the following:
+
+```cmake
+# specify the C++ standard
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+```
+
 We're going to have CMake **generate a header file** that defines the version number at compile time.
 
 To do that, you can add this line:
@@ -319,3 +327,6 @@ Now change the `main()` to include arguments and add a cout to tell us the versi
 ## Acknowledgements
 
 This document is basically me working through the excellent CMake tutorials by Code, Tech, and Tutorials on YouTube. [Here's a link to the CMake playlist](https://www.youtube.com/watch?v=nlKcXPUJGwA&list=PLalVdRk2RC6o5GHu618ARWh0VO0bFlif4&t=0s). Videos 1–4 were the most relevant to me at the moment, so those were what I focussed on.
+
+I've aslo drawn from the [CMake tutorial on cmake.org](https://cmake.org/cmake-tutorial/).
+
