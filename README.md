@@ -133,7 +133,7 @@ The PUBLIC keyword is about scope, but is beyond my knowledge at this moment, bu
 
 ## Editing CMakeLists.txt: Submodules and GitHub Integration
 
-CMake allows you to include any GitHub repo into your project fairly seamlessly by submoduling it in.
+CMake allows you to include any GitHub repo into your project fairly seamlessly by submoduling it in. It's easy as long as the repository has a CMakeLists.txt. [*Note*: I'll update this in the future for non-CMake libraries.]
 
 This is used with a git command which has the following syntax:
 
@@ -289,7 +289,7 @@ configure_file(Config.h.in Config.h)
 We also need to create a new target_include_directories command so that we can `#include` our generated `Config.h` file. Below the `add_executable()` command, go ahead and add the following:
 
 ```cmake
-target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_BINARY_DIR})
+target_include_directories(${PROJECT_NAME} PUBLIC ${ROJECT_BINARY_DIR})
 ```
 
 Now create a new file called `Config.h.in` (or any name you please as long as it is consistent with the above instructions) and include the following:
