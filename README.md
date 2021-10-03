@@ -258,6 +258,75 @@ git submodule update --init --recursive
 
 There is a method for doing this automatically in your `CMakeLists.txt` file, but it's beyond the scope of this article. You can find [a great description of how to do this at this link](https://cliutils.gitlab.io/modern-cmake/chapters/projects/submodule.html).
 
+## Adding a Library Using Environment Variables
+
+One great workflow to minimize the amount of space you end up using for libraries and only need to compile the binaries once is to store them in the same place and use environment variables to refer to them.
+
+Environment variables are system-wide variables you can set in your shell. This tutorial is for .zsh, but you can also find information on bash as well.
+
+1. Make sure to check which shell you're using. I'm going to give instructions for zsh. To check your shell type:
+
+   ```bash
+   echo $0
+   ```
+
+2. If the response is -`zsh`, these instructions will work for you. If not [here's a site with the bash instructions as well](https://flaviocopes.com/shell-environment-variables/). It's not all that different.
+
+3. Download your library. This example uses GLM and GLFW. Create a folder and call it `MIDDLEWARE` or `LIBRARIES` or whatever name you would like.
+
+4. Wherever you put them you'll need to add environment variables that refer to them. To open your shell configuration file in TextEdit, type:
+
+   ```bash
+   open .zshrc
+   ```
+
+   If you prefer a command-line text editor like vim or nano you can use that too. TextEdit is quite easy, so I use `open`.
+
+5. Add the external variables by adding these to the end of your `.zshrc` file (we'll focus on the OpenCV one):
+
+   ```bash
+   export GLM_DIR="/(INSERT YOUR PATH)/glm"
+   export GLFW_DIR="/(INSERT YOUR PATH)/glfw"
+   export OPENCV_DIR="/(INSERT YOUR PATH)/build_opencv"
+   ```
+
+6. You'll need to now set a CMake variable to that directory, double check that the variabe was found, and use the `find_package()` function to find and load the settings from your library (assuming it is compatible with CMake):
+
+   ```cmake
+   set(OpenCV_DIR "$ENV{OPENCV_DIR}")
+   
+   if(OpenCV_DIR)
+     message(STATUS "OpenCV environment variable found")
+     find_package(OpenCV REQUIRED)
+   else()
+     message(STATUS "OpenCV environment variable not found")
+   
+   endif()
+   ```
+
+7. Next you'll need to go through two steps.
+
+   First you'll have to add the target include directories. The include directories are specific to any package that uses CMake. In the case of OpenCV, it's called `OpenCV_INCLUDE_DIRS` and this is declared in the `OpenCVConfig.cmake` file in OpenCV's build folder.
+
+   ```cmake
+   target_include_directories(${PROJECT_NAME}             
+   		PRIVATE
+   		${PROJECT_BINARY_DIR}
+   		${OpenCV_INCLUDE_DIRS}
+   )
+   ```
+
+8. Next you'll need to lik the libraries:
+
+   ```cmake
+   target_link_libraries(${PROJECT_NAME}
+   		PRIVATE
+   		${OpenCV_LIBS}
+   )
+   ```
+
+That's it! You should now be able to use OpenCV (or any other library) from a middleware folder on your computer.
+
 ## Editing CMakeLists.txt: Versions
 
 If you want to keep track of your versions, you can add a version argument to your `project()` command in your `CMakeLists.txt` file. This section will teach you how to print a version number whenever your program starts up.
@@ -326,7 +395,9 @@ Now change the `main()` to include arguments and add a cout to tell us the versi
 
 ## Acknowledgements
 
-This document is basically me working through the excellent CMake tutorials by Code, Tech, and Tutorials on YouTube. [Here's a link to the CMake playlist](https://www.youtube.com/watch?v=nlKcXPUJGwA&list=PLalVdRk2RC6o5GHu618ARWh0VO0bFlif4&t=0s). Videos 1–4 were the most relevant to me at the moment, so those were what I focussed on.
+This document is basically me working through the CMake tutorials by Code, Tech, and Tutorials on YouTube. [Here's a link to the CMake playlist](https://www.youtube.com/watch?v=nlKcXPUJGwA&list=PLalVdRk2RC6o5GHu618ARWh0VO0bFlif4&t=0s). Videos 1–4 were the most relevant to me at the moment, so those were what I focussed on.
+
+I also used [this Udemy course](https://www.udemy.com/share/102FPyA0UedFpWQnw=/) on CMake.
 
 I've aslo drawn from the [CMake tutorial on cmake.org](https://cmake.org/cmake-tutorial/).
 
